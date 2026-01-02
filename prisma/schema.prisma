@@ -1,0 +1,176 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// -----------------------------------------------------------------------------
+// CORE MULTI-TENANCY
+// -----------------------------------------------------------------------------
+
+model Tenant {
+  id          String   @id @default(uuid())
+  slug        String   @unique // e.g. "mi-tienda" (subdomain)
+  name        String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Billing
+  plan        String   @default("FREE") // "FREE", "PRO_AGENTS"
+  isActive    Boolean  @default(true)
+  activeProductsCount Int @default(0) // Cache for billing
+  
+  // Appearance
+  template    String   @default("MINIMAL") // "MINIMAL", "BOUTIQUE", "MARKET"
+  language    String   @default("es") // "es", "en"
+
+  // Relations
+  users       User[]
+  products    Product[]
+  conversations Conversation[]
+  orders      Order[]
+  installedAgents TenantAgent[]
+  wallet      AIWallet?
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String?
+  role      String   @default("STAFF") // "OWNER", "STAFF"
+  
+  // Tenant Relation
+  tenantId  String
+  tenant    Tenant   @relation(fields: [tenantId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// -----------------------------------------------------------------------------
+// STOREFRONT & CATALOG
+// -----------------------------------------------------------------------------
+
+model Product {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  price       Decimal  @db.Decimal(10, 2)
+  sku         String?
+  imageUrl    String?
+  isActive    Boolean  @default(true) // Crucial for billing
+  stock       Int      @default(0)
+
+  // Tenant Relation
+  tenantId    String
+  tenant    Tenant   @relation(fields: [tenantId], references: [id])
+
+  orderItems OrderItem[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([tenantId])
+}
+
+model Order {
+  id          String      @id @default(uuid())
+  orderNumber Int         @default(autoincrement()) // Per-tenant logic needed ideally, but simple for now
+  status      String      @default("PENDING") // "PENDING", "PAID", "SHIPPED"
+  total       Decimal     @db.Decimal(10, 2)
+  
+  customerPhone String?   // WhatsApp link
+  customerName  String?
+
+  tenantId    String
+  tenant    Tenant      @relation(fields: [tenantId], references: [id])
+
+  items       OrderItem[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model OrderItem {
+  id        String   @id @default(uuid())
+  quantity  Int
+  price     Decimal  @db.Decimal(10, 2)
+  
+  orderId   String
+  order     Order    @relation(fields: [orderId], references: [id])
+  
+  productId String
+  product   Product  @relation(fields: [productId], references: [id])
+}
+
+// -----------------------------------------------------------------------------
+// WHATSAPP CRM & AGENTS
+// -----------------------------------------------------------------------------
+
+model Conversation {
+  id            String   @id @default(uuid())
+  customerPhone String
+  status        String   @default("OPEN") // "OPEN", "CLOSED", "ARCHIVED"
+  
+  tenantId      String
+  tenant        Tenant   @relation(fields: [tenantId], references: [id])
+
+  messages      Message[]
+  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@unique([tenantId, customerPhone])
+}
+
+model Message {
+  id             String   @id @default(uuid())
+  content        String
+  sender         String   // "USER", "AGENT", "STAFF"
+  timestamp      DateTime @default(now())
+  
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id])
+}
+
+// Global Agent Catalog (Managed by Root Admin)
+model AgentCatalog {
+  id          String   @id @default(uuid())
+  name        String
+  description String
+  role        String   // "SALES", "SUPPORT", "MARKETING"
+  version     String   @default("1.0.0")
+  
+  installations TenantAgent[]
+}
+
+model TenantAgent {
+  id             String   @id @default(uuid())
+  isActive       Boolean  @default(false)
+  
+  tenantId       String
+  tenant         Tenant   @relation(fields: [tenantId], references: [id])
+  
+  agentId        String
+  agent          AgentCatalog @relation(fields: [agentId], references: [id])
+
+  configuration  Json?    // Custom prompt rules, schedule, etc.
+
+  @@unique([tenantId, agentId])
+}
+
+model AIWallet {
+  id          String   @id @default(uuid())
+  balance     Decimal  @default(0) @db.Decimal(12, 4) // Credits
+  
+  tenantId    String   @unique
+  tenant      Tenant   @relation(fields: [tenantId], references: [id])
+
+  updatedAt   DateTime @updatedAt
+}
