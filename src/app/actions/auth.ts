@@ -3,7 +3,7 @@
 import { PrismaClient } from '@prisma/client'
 import { redirect } from 'next/navigation'
 import bcrypt from 'bcryptjs'
-import { createSession } from '@/lib/session'
+import { createSession, deleteSession } from '@/lib/session'
 
 const prisma = new PrismaClient()
 
@@ -63,5 +63,10 @@ export async function loginAction(
         }
     }
 
-    redirect('/')
+    redirect('/dashboard')
+}
+
+export async function logoutAction() {
+    await deleteSession()
+    redirect('/login')
 }

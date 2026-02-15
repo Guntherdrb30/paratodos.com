@@ -120,5 +120,5 @@ export async function createStoreAction(
     }
 
     // Redirect on success
-    redirect('/login?registered=true');
+    redirect('/dashboard');
 }
