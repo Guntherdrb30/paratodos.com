@@ -2,6 +2,8 @@
 
 import { PrismaClient } from '@prisma/client';
 import { redirect } from 'next/navigation';
+import bcrypt from 'bcryptjs';
+import { createSession } from '@/lib/session';
 
 const prisma = new PrismaClient();
 
@@ -12,6 +14,7 @@ export type CreateStoreState = {
         template?: string[];
         userName?: string[];
         email?: string[];
+        password?: string[];
 
         _form?: string[];
     };
@@ -27,6 +30,7 @@ export async function createStoreAction(
     const template = formData.get('template') as string;
     const userName = formData.get('userName') as string;
     const email = formData.get('email') as string;
+    const password = formData.get('password') as string;
 
 
     // Basic Validation
@@ -38,6 +42,9 @@ export async function createStoreAction(
     }
     if (!email || !email.includes('@')) {
         return { errors: { email: ['Por favor ingresa un correo electrónico válido.'] } };
+    }
+    if (!password || password.length < 6) {
+        return { errors: { password: ['La contraseña debe tener al menos 6 caracteres.'] } };
     }
 
 
@@ -87,17 +94,20 @@ export async function createStoreAction(
             });
 
             // 2. Create User
-            await tx.user.create({
+            const hashedPassword = await bcrypt.hash(password, 10);
+
+            const user = await tx.user.create({
                 data: {
                     name: userName,
                     email,
                     role: 'OWNER',
                     tenantId: tenant.id,
-                    // Note: In a real app, hash the password here. 
-                    // Since schema doesn't have password field yet, we assume external auth or need to add it.
-                    // For now, we proceed as if we are creating the user record for our system.
+                    password: hashedPassword,
                 },
             });
+
+            // Create session immediately
+            await createSession(user.id, tenant.id, user.role);
 
             // 3. Create initial demo data or settings if needed
         });

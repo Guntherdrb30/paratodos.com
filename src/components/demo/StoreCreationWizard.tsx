@@ -28,6 +28,7 @@ export function StoreCreationWizard({ onComplete }: StoreCreationWizardProps) {
     // New Account State
     const [userName, setUserName] = useState("");
     const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
 
 
     const handleNext = () => {
@@ -38,7 +39,7 @@ export function StoreCreationWizard({ onComplete }: StoreCreationWizardProps) {
 
     const isStepValid = () => {
         if (step === 1) return name.length > 2 && category !== "";
-        if (step === 2) return userName.length > 2 && email.includes("@");
+        if (step === 2) return userName.length > 2 && email.includes("@") && password.length >= 6;
         if (step === 3) return template !== "";
         return true;
     };
@@ -132,6 +133,18 @@ export function StoreCreationWizard({ onComplete }: StoreCreationWizardProps) {
                                 />
                                 {state.errors?.email && <p className="text-red-500 text-sm">{state.errors.email}</p>}
                             </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="password">Password</Label>
+                                <Input
+                                    id="password"
+                                    type="password"
+                                    placeholder="••••••••"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    className="bg-zinc-800 border-zinc-700 focus-visible:ring-primary"
+                                />
+                                <p className="text-xs text-zinc-500">Must be at least 6 characters.</p>
+                            </div>
                         </motion.div>
                     )}
 
@@ -163,6 +176,7 @@ export function StoreCreationWizard({ onComplete }: StoreCreationWizardProps) {
                             <input type="hidden" name="template" value={template} />
                             <input type="hidden" name="userName" value={userName} />
                             <input type="hidden" name="email" value={email} />
+                            <input type="hidden" name="password" value={password} />
 
                             <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-4">
                                 {state.message && (
