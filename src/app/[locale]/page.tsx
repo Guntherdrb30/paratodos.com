@@ -28,7 +28,9 @@ export default function Home() {
               <Button variant="ghost" asChild>
                 <Link href="/login">{nav('login')}</Link>
               </Button>
-              <Button>{nav('getStarted')}</Button>
+              <Button asChild>
+                <Link href="/register">{nav('getStarted')}</Link>
+              </Button>
             </nav>
           </div>
         </div>
@@ -47,8 +49,10 @@ export default function Home() {
               {t('subtitle')}
             </p>
             <div className="space-x-4 pt-4">
-              <Button size="lg" className="h-12 px-8 text-lg shadow-lg shadow-primary/20 transition-all hover:shadow-primary/40">
-                {t('startBtn')} <ArrowRight className="ml-2 h-5 w-5" />
+              <Button size="lg" className="h-12 px-8 text-lg shadow-lg shadow-primary/20 transition-all hover:shadow-primary/40" asChild>
+                <Link href="/register">
+                  {t('startBtn')} <ArrowRight className="ml-2 h-5 w-5" />
+                </Link>
               </Button>
               <Button variant="outline" size="lg" className="h-12 px-8 text-lg backdrop-blur-sm bg-background/50" asChild>
                 <Link href="/preview">
