@@ -1,0 +1,27 @@
+{
+    "HomePage": {
+        "badge": "v1.0 Beta Pública",
+        "title": "El Sistema Operativo\nE-commerce de Próxima Generación",
+        "subtitle": "Lanza tu tienda en minutos. Vende con precios por uso.\nAutomatiza todo con agentes de IA integrados.",
+        "startBtn": "Crear Tienda",
+        "demoBtn": "Ver Demo",
+        "features": {
+            "storefront": {
+                "title": "Tienda Instantánea",
+                "desc": "Tienda online profesional generada desde tu catálogo."
+            },
+            "whatsapp": {
+                "title": "CRM WhatsApp",
+                "desc": "Cierra ventas directamente donde están tus clientes."
+            },
+            "agents": {
+                "title": "Agentes IA",
+                "desc": "Contrata personal IA para ventas, soporte y operaciones."
+            }
+        }
+    },
+    "Navigation": {
+        "login": "Iniciar Sesión",
+        "getStarted": "Empezar"
+    }
+}

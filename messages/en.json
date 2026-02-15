@@ -1,0 +1,27 @@
+{
+    "HomePage": {
+        "badge": "v1.0 Public Beta",
+        "title": "The Next Gen\nE-commerce Operating System",
+        "subtitle": "Launch your store in minutes. Sell on usage-based pricing.\nAutomate everything with built-in AI agents.",
+        "startBtn": "Start Your Store",
+        "demoBtn": "View Demo",
+        "features": {
+            "storefront": {
+                "title": "Instant Storefront",
+                "desc": "Professional online store generated from your catalog."
+            },
+            "whatsapp": {
+                "title": "WhatsApp CRM",
+                "desc": "Close sales directly where your customers are."
+            },
+            "agents": {
+                "title": "AI Agents",
+                "desc": "Hire AI staff for sales, support, and operations."
+            }
+        }
+    },
+    "Navigation": {
+        "login": "Login",
+        "getStarted": "Get Started"
+    }
+}
