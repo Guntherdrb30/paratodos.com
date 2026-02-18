@@ -2,6 +2,16 @@ import 'server-only'
 import { SignJWT, jwtVerify } from 'jose'
 import { cookies } from 'next/headers'
 
+// Allow Prisma to work on Vercel projects that expose POSTGRES_* variables.
+if (!process.env.DATABASE_URL) {
+    process.env.DATABASE_URL =
+        process.env.POSTGRES_PRISMA_URL ?? process.env.POSTGRES_URL
+}
+
+if (!process.env.DIRECT_URL) {
+    process.env.DIRECT_URL = process.env.POSTGRES_URL_NON_POOLING
+}
+
 const secretKey = process.env.SESSION_SECRET
 const encodedKey = new TextEncoder().encode(secretKey)
 
