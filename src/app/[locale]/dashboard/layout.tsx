@@ -1,5 +1,4 @@
-import { getSession } from "@/lib/session";
-import { redirect } from "next/navigation";
+import { requireAuth } from "@/lib/session";
 import Link from "next/link";
 import {
     LayoutDashboard,
@@ -14,18 +13,12 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { logoutAction } from "@/app/actions/auth";
 
-export default async function DashboardLayout({
-    children,
-}: {
-    children: React.ReactNode;
-}) {
-    const session = await getSession();
+type DashboardNavItemsProps = {
+    locale: string;
+};
 
-    if (!session) {
-        redirect("/login");
-    }
-
-    const NavItems = () => (
+function DashboardNavItems({ locale }: DashboardNavItemsProps) {
+    return (
         <>
             <div className="px-3 py-2">
                 <h2 className="mb-2 px-4 text-lg font-semibold tracking-tight">
@@ -33,7 +26,7 @@ export default async function DashboardLayout({
                 </h2>
                 <div className="space-y-1">
                     <Button variant="secondary" className="w-full justify-start" asChild>
-                        <Link href="/dashboard">
+                        <Link href={`/${locale}/dashboard`}>
                             <LayoutDashboard className="mr-2 h-4 w-4" />
                             Dashboard
                         </Link>
@@ -65,24 +58,37 @@ export default async function DashboardLayout({
             </div>
         </>
     );
+}
+
+type DashboardLayoutProps = {
+    children: React.ReactNode;
+    params: Promise<{ locale: string }>;
+};
+
+export default async function DashboardLayout({
+    children,
+    params,
+}: DashboardLayoutProps) {
+    const { locale } = await params;
+    await requireAuth(locale);
 
     return (
         <div className="flex min-h-screen flex-col md:flex-row">
-            {/* Sidebar for Desktop */}
             <aside className="hidden w-64 border-r bg-zinc-950/50 md:block">
                 <div className="flex h-16 items-center border-b px-6">
-                    <Link className="flex items-center gap-2 font-bold" href="/dashboard">
-                        <span className="text-xl tracking-tighter bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent">
+                    <Link className="flex items-center gap-2 font-bold" href={`/${locale}/dashboard`}>
+                        <span className="bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-xl tracking-tighter text-transparent">
                             ParatodosIA
                         </span>
                     </Link>
                 </div>
                 <div className="py-4">
-                    <NavItems />
+                    <DashboardNavItems locale={locale} />
                 </div>
                 <div className="absolute bottom-4 left-0 w-full px-6">
                     <form action={logoutAction}>
-                        <Button variant="outline" className="w-full justify-start text-red-500 hover:text-red-600 hover:bg-red-500/10 border-red-500/20">
+                        <input type="hidden" name="locale" value={locale} />
+                        <Button variant="outline" className="w-full justify-start border-red-500/20 text-red-500 hover:bg-red-500/10 hover:text-red-600">
                             <LogOut className="mr-2 h-4 w-4" />
                             Log out
                         </Button>
@@ -90,7 +96,6 @@ export default async function DashboardLayout({
                 </div>
             </aside>
 
-            {/* Mobile Header & Content */}
             <div className="flex-1">
                 <header className="flex h-16 items-center border-b px-6 md:hidden">
                     <Sheet>
@@ -101,12 +106,13 @@ export default async function DashboardLayout({
                         </SheetTrigger>
                         <SheetContent side="left" className="w-64 p-0">
                             <div className="flex h-16 items-center border-b px-6">
-                                <span className="font-bold text-xl">Menu</span>
+                                <span className="text-xl font-bold">Menu</span>
                             </div>
                             <div className="py-4">
-                                <NavItems />
+                                <DashboardNavItems locale={locale} />
                                 <div className="mt-8 px-3">
                                     <form action={logoutAction}>
+                                        <input type="hidden" name="locale" value={locale} />
                                         <Button variant="outline" className="w-full justify-start text-red-500">
                                             <LogOut className="mr-2 h-4 w-4" />
                                             Log out

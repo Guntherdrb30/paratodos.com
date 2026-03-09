@@ -1,14 +1,24 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DollarSign, Package, ShoppingCart, Users } from "lucide-react";
-import { getSession } from "@/lib/session";
+import { requireAuth } from "@/lib/session";
 
-export default async function DashboardPage() {
-    const session = await getSession();
+type DashboardPageProps = {
+    params: Promise<{ locale: string }>;
+};
+
+export default async function DashboardPage({ params }: DashboardPageProps) {
+    const { locale } = await params;
+    const auth = await requireAuth(locale);
 
     return (
         <div className="space-y-8">
             <div className="flex items-center justify-between space-y-2">
-                <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
+                <div>
+                    <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
+                    <p className="text-sm text-muted-foreground">
+                        {auth.user.tenant.name} · Plan {auth.user.tenant.plan}
+                    </p>
+                </div>
             </div>
 
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">

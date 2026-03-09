@@ -1,6 +1,5 @@
 import { StoreData } from "@/lib/demo-data";
 import { Button } from "@/components/ui/button";
-import { ShoppingCart } from "lucide-react";
 import Image from "next/image";
 
 export function MinimalTemplate({ data }: { data: StoreData }) {

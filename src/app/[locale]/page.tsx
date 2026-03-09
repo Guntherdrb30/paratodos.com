@@ -16,7 +16,7 @@ export default function Home() {
       <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="w-full max-w-7xl mx-auto flex h-16 items-center px-4 md:px-6">
           <div className="mr-4 flex">
-            <Link className="mr-6 flex items-center space-x-2" href="/">
+            <Link className="mr-6 flex items-center space-x-2" href={`/${locale}`}>
               <span className="font-bold text-xl tracking-tighter bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent">
                 ParatodosIA
               </span>
@@ -26,10 +26,10 @@ export default function Home() {
             <nav className="flex items-center space-x-4">
               <LanguageSwitcher />
               <Button variant="ghost" asChild>
-                <Link href="/login">{nav('login')}</Link>
+                <Link href={`/${locale}/login`}>{nav('login')}</Link>
               </Button>
               <Button asChild>
-                <Link href="/register">{nav('getStarted')}</Link>
+                <Link href={`/${locale}/register`}>{nav('getStarted')}</Link>
               </Button>
             </nav>
           </div>
@@ -50,12 +50,12 @@ export default function Home() {
             </p>
             <div className="space-x-4 pt-4">
               <Button size="lg" className="h-12 px-8 text-lg shadow-lg shadow-primary/20 transition-all hover:shadow-primary/40" asChild>
-                <Link href="/register">
+                <Link href={`/${locale}/register`}>
                   {t('startBtn')} <ArrowRight className="ml-2 h-5 w-5" />
                 </Link>
               </Button>
               <Button variant="outline" size="lg" className="h-12 px-8 text-lg backdrop-blur-sm bg-background/50" asChild>
-                <Link href="/preview">
+                <Link href={`/${locale}/preview`}>
                   {t('demoBtn')}
                 </Link>
               </Button>

@@ -1,2 +1,3 @@
-require('dotenv').config();
+import 'dotenv/config';
+
 console.log('FULL_DB_URL:' + process.env.DATABASE_URL);

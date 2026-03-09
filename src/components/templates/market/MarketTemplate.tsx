@@ -47,7 +47,7 @@ export function MarketTemplate({ data }: { data: StoreData }) {
             <div className="bg-[#37475a] text-white text-sm py-2 px-4 shadow-md mb-6">
                 <div className="w-full max-w-7xl mx-auto flex gap-6 overflow-x-auto whitespace-nowrap scrollbar-hide">
                     <span className="font-bold flex items-center gap-1"><Menu className="h-4 w-4" /> All</span>
-                    <span>Today's Deals</span>
+                    <span>Today&apos;s Deals</span>
                     <span>Customer Service</span>
                     <span>Registry</span>
                     <span>Gift Cards</span>

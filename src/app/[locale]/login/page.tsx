@@ -1,6 +1,7 @@
 'use client'
 
 import { useActionState } from 'react'
+import { useLocale } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -12,6 +13,7 @@ import { Loader2 } from 'lucide-react'
 export default function LoginPage() {
     const initialState: LoginState = { message: '', errors: {} }
     const [state, formAction, isPending] = useActionState(loginAction, initialState)
+    const locale = useLocale()
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-zinc-950 p-4">
@@ -24,6 +26,7 @@ export default function LoginPage() {
                 </CardHeader>
                 <CardContent>
                     <form action={formAction} className="space-y-4">
+                        <input type="hidden" name="locale" value={locale} />
                         <div className="space-y-2">
                             <Label htmlFor="email">Correo Electrónico</Label>
                             <Input
@@ -80,7 +83,7 @@ export default function LoginPage() {
                 <CardFooter className="flex justify-center">
                     <p className="text-sm text-zinc-500">
                         ¿No tienes una cuenta?{' '}
-                        <Link href="/" className="text-primary hover:underline">
+                        <Link href={`/${locale}`} className="text-primary hover:underline">
                             Crea tu tienda
                         </Link>
                     </p>
